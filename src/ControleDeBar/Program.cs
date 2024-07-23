@@ -20,6 +20,9 @@ public class Program
         //Lambda expression 
 
         app.MapGet("/clientes", TragaClientes);
+        app.MapPost("/clientes", AdicionarCliente);
+        app.MapPost("/clientes/editar", EditarCliente);
+        app.MapPost("/clientes/deletar", DeletarCliente);
 
         app.Run();
     }
@@ -29,7 +32,13 @@ public class Program
         string clientesTabela = string.Empty;
         foreach (var cliente in Clientes)
         {
-            string linhaCLiente = $"<tr><td> {cliente.Nome}</td><td>{cliente.Id}</td></tr>";
+            string linhaCLiente = $@"
+<tr>
+    <td> {cliente.Nome}</td>
+    <td>{cliente.Id}</td>
+    <td>Editar</td>
+    <td>Deletar</td>    
+</tr>";
             clientesTabela += linhaCLiente;
         }
         string html =
@@ -39,6 +48,14 @@ public class Program
 <title>Meu Primeiro Website</title>
 </head>
 <body>
+
+<form method='post' action='/clientes'>
+    <label for='nome'> Nome: </label>
+    <input type='text' id='nome' name='nome' required>
+    <button type='submit'> Adicionar Cliente </button>
+</form>
+
+
 <h1>Clientes</h1>
 
 <table>
@@ -46,6 +63,8 @@ public class Program
     <tr>
         <th>Nome</th>
         <th>Id</th>
+        <th>Editar</th>
+        <th>Deletar</th>
     </tr>
   </thead>
 
@@ -57,6 +76,20 @@ public class Program
 </html>
 ";
         return Results.Text(html, "text/html");
+    }
+
+    private static IResult AdicionarCliente(HttpContext httpContext)
+    {
+        var form = httpContext.Request.Form;
+        var nome = form["nome"].ToString();
+        var id = Clientes.Count + 1;
+        var cliente = new Cliente()
+        {
+            Nome = nome,
+            Id = id.ToString()
+        };
+        Clientes.Add(cliente);
+        return Results.Redirect("/clientes");
     }
 
     public class Cliente
