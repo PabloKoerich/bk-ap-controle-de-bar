@@ -36,8 +36,8 @@ public class Program
 <tr>
     <td> {cliente.Nome}</td>
     <td>{cliente.Id}</td>
-    <td>Editar</td>
-    <td>Deletar</td>    
+    <td>{cliente.Editar}</td>
+    <td>{cliente.Deletar}</td>    
 </tr>";
             clientesTabela += linhaCLiente;
         }
@@ -53,6 +53,18 @@ public class Program
     <label for='nome'> Nome: </label>
     <input type='text' id='nome' name='nome' required>
     <button type='submit'> Adicionar Cliente </button>
+</form>
+
+<form method='post' action='/clientes'>
+    <label for='nome'> Nome: </label>
+    <input type='text' id='nome' name='nome' required>
+    <button type='submit'> Editar Cliente </button>
+</form>
+
+<form method='post' action='/clientes'>
+    <label for='nome'> Nome: </label>
+    <input type='text' id='nome' name='nome' required>
+    <button type='submit'> Deletar Cliente </button>
 </form>
 
 
@@ -86,7 +98,36 @@ public class Program
         var cliente = new Cliente()
         {
             Nome = nome,
+            Id = id.ToString(),
+        };
+        Clientes.Add(cliente);
+        return Results.Redirect("/clientes");
+    }
+
+    private static IResult EditarCliente(HttpContext httpContext)
+    {
+        var form = httpContext.Request.Form;
+        var nome = form["nome"].ToString();
+        var id = Clientes.Count + 1;
+        var cliente = new Cliente()
+        {
+            Nome = nome,
             Id = id.ToString()
+        };
+        Clientes.Add(cliente);
+        return Results.Redirect("/clientes");
+    }
+
+    private static IResult DeletarCliente(HttpContext httpContext)
+    {
+        var form = httpContext.Request.Form;
+        var nome = form["nome"].ToString();
+        var id = Clientes.Count + 1;
+        var cliente = new Cliente()
+        {
+            Nome = nome,
+            Id = id.ToString()
+
         };
         Clientes.Add(cliente);
         return Results.Redirect("/clientes");
@@ -96,5 +137,7 @@ public class Program
     {
         public string Id { get; set; }
         public string Nome { get; set; }
+        public string Editar { get; set; }
+        public string Deletar {  get; set; }
     }
 }
